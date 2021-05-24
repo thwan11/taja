@@ -1,3 +1,8 @@
+/*
+	Bug Report
+	SetColor 사용 시 처음 박스 모양 오류
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -13,7 +18,7 @@ void gotoxy(int, int);
 void show_string(char *);
 void ShowBox();
 void ShowHealth(int);
-void setColor(unsigned short, unsigned short);
+//void SetColor(unsigned short, unsigned short);
 
 int main() {
 	char word[SIZE], ch, input[SIZE];
@@ -24,16 +29,17 @@ int main() {
 	system("mode con cols=128 lines=32");
 	srand(time(0));
 	ShowHealth(health);
+	ShowBox();
 	show_string(word);
 	s_time = time(0);
 	while (1)
 	{
-		
 		if (time(0) == s_time + TIME_LIMIT)
 		{
 			system("cls");
 			health -= 2;
 			ShowHealth(health);
+			ShowBox();
 			show_string(word);
 			s_time = time(0);
 			j = 0;
@@ -74,10 +80,14 @@ int main() {
 
 			system("cls");
 			ShowHealth(health);
+			ShowBox();
 			show_string(word);
 			s_time = time(0);
 			j = 0;
 		}
+
+		if (health == 0)
+			break;
 	}
 
 	return 0;
@@ -95,7 +105,7 @@ void show_string(char* w)
 {
 	int i, x=15;
 	
-	ShowBox();
+	//ShowBox();
 	for (i = 0; i <= 4; i++)
 		w[i] = 'a' + (rand() % 26);
 	w[i] = 0;
@@ -107,6 +117,8 @@ void show_string(char* w)
 void ShowBox()
 {
 	int x = 9, y = 8, i;
+
+	//SetColor(15, 0);					// 지워도 되도록
 
 	gotoxy(x, y);
 	printf("┌");
@@ -164,15 +176,18 @@ void ShowHealth(int health)					// 색깔 버그 고치기
 	
 	gotoxy(WIDTH - 30, 5);
 	printf("                    ");
-	gotoxy(WIDTH - 35, 5);
-	printf("HP : ");
-	setColor(12,0);
+	gotoxy(WIDTH - 37, 5);
+	//SetColor(15, 4);
+	printf(" HP ");
+	//SetColor(15, 0);
+	printf(" : ");
+	//SetColor(12,0);
 	for (i = 0; i < health; i++)
 		printf("\u2665");
-	setColor(15, 0);
+	//SetColor(15, 0);
 }
 
-void setColor(unsigned short text, unsigned short back)
+/*void SetColor(unsigned short text, unsigned short back)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), text | (back << 4));
-}
+}*/
