@@ -145,6 +145,9 @@ void ShowBox()
 void ShowHealth(int health)
 {
 	int i;
+	
+	gotoxy(WIDTH - 30, 5);
+	printf("                    ");
 	gotoxy(WIDTH - 35, 5);
 	printf("HP : ");
 	for (i = 0; i < health; i++)
