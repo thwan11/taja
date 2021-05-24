@@ -12,7 +12,8 @@
 void gotoxy(int, int);
 void show_string(char *);
 void ShowBox();
-void ShowHealth(int health);
+void ShowHealth(int);
+void setColor(unsigned short, unsigned short);
 
 int main() {
 	char word[SIZE], ch, input[SIZE];
@@ -43,6 +44,15 @@ int main() {
 			ch = _getch();
 			if (ch == 27)
 				break;
+			if (j > 0)
+			{
+				if (ch == 8)
+				{
+					printf("\b \b");
+					input[j] = 0;
+					j--;
+				}
+			}
 			if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))
 			{
 				printf("%c", ch);
@@ -59,9 +69,10 @@ int main() {
 				printf("\n축하합니다.\n");
 				Sleep(1000);
 			}
+			else
+				health--;
 
 			system("cls");
-			health--;
 			ShowHealth(health);
 			show_string(word);
 			s_time = time(0);
@@ -83,7 +94,7 @@ void gotoxy(int x, int y)
 void show_string(char* w)
 {
 	int i, x=15;
-	//ShowHealth(10);								// test
+	
 	ShowBox();
 	for (i = 0; i <= 4; i++)
 		w[i] = 'a' + (rand() % 26);
@@ -147,7 +158,7 @@ void ShowBox()
 	printf("┘");
 }
 
-void ShowHealth(int health)
+void ShowHealth(int health)					// 색깔 버그 고치기
 {
 	int i;
 	
@@ -155,6 +166,13 @@ void ShowHealth(int health)
 	printf("                    ");
 	gotoxy(WIDTH - 35, 5);
 	printf("HP : ");
+	setColor(12,0);
 	for (i = 0; i < health; i++)
 		printf("\u2665");
+	setColor(15, 0);
+}
+
+void setColor(unsigned short text, unsigned short back)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), text | (back << 4));
 }
