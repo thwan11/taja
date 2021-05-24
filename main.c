@@ -22,6 +22,7 @@ int main() {
 
 	system("mode con cols=128 lines=32");
 	srand(time(0));
+	ShowHealth(health);
 	show_string(word);
 	s_time = time(0);
 	while (1)
@@ -30,6 +31,8 @@ int main() {
 		if (time(0) == s_time + TIME_LIMIT)
 		{
 			system("cls");
+			health -= 2;
+			ShowHealth(health);
 			show_string(word);
 			s_time = time(0);
 			j = 0;
@@ -58,6 +61,8 @@ int main() {
 			}
 
 			system("cls");
+			health--;
+			ShowHealth(health);
 			show_string(word);
 			s_time = time(0);
 			j = 0;
@@ -78,7 +83,7 @@ void gotoxy(int x, int y)
 void show_string(char* w)
 {
 	int i, x=15;
-	ShowHealth(10);								// test
+	//ShowHealth(10);								// test
 	ShowBox();
 	for (i = 0; i <= 4; i++)
 		w[i] = 'a' + (rand() % 26);
