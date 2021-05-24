@@ -11,12 +11,14 @@
 
 void gotoxy(int, int);
 void show_string(char *);
-void ShowScreen();
+void ShowBox();
+void ShowHealth(int health);
 
 int main() {
 	char word[SIZE], ch, input[SIZE];
 	int s_time, j = 0;
-	int health = 0;
+	int health = 10;
+
 
 	system("mode con cols=128 lines=32");
 	srand(time(0));
@@ -76,7 +78,8 @@ void gotoxy(int x, int y)
 void show_string(char* w)
 {
 	int i, x=15;
-	ShowScreen();
+	ShowHealth(10);								// test
+	ShowBox();
 	for (i = 0; i <= 4; i++)
 		w[i] = 'a' + (rand() % 26);
 	w[i] = 0;
@@ -85,7 +88,7 @@ void show_string(char* w)
 	gotoxy(127/2 - 5/2, 19);
 }
 
-void ShowScreen()
+void ShowBox()
 {
 	int x = 9, y = 8, i;
 
@@ -137,4 +140,13 @@ void ShowScreen()
 	for (i = 0; i < 106; i++)
 		printf("¦¡");
 	printf("¦¥");
+}
+
+void ShowHealth(int health)
+{
+	int i;
+	gotoxy(WIDTH - 35, 5);
+	printf("HP : ");
+	for (i = 0; i < health; i++)
+		printf("\u2665");
 }
