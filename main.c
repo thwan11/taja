@@ -14,7 +14,7 @@
 #define WIDTH 128
 #define HEIGHT 32
 #define SIZE 6
-#define TIME_LIMIT 5
+#define TIME_LIMIT 5		//  통일 필요
 
 // 김태영
 #define CHILD_CLEAR 150         /*유아기 클리어 점수*/
@@ -35,6 +35,7 @@ void show_string(char *);						// 문자열 출력
 void ShowBox();									// 박스 출력
 void ShowHealth(int);							// 체력 출력
 void SetColor(unsigned short, unsigned short);	// 색 변경
+void ShowScore();								// 점수 출력
 
 // 김태영
 void time_score();            //남은 시간에 따른 점수
@@ -76,6 +77,7 @@ int main() {
 	
 	
 	ShowBox();
+	ShowScore();
 	ShowHealth(health);
 	show_string(word);
 	
@@ -87,6 +89,7 @@ int main() {
 			system("cls");
 			health -= 2;	// 시간 초과 체력 -2
 			ShowBox();
+			ShowScore();
 			ShowHealth(health);
 			show_string(word);
 			s_time = time(0);
@@ -119,7 +122,10 @@ int main() {
 			input[SIZE - 1] = 0;
 			if (!strcmp(word, input))
 			{
-				printf("\n축하합니다.\n");
+				remain_time = s_time + TIME_LIMIT - time(0);
+				time_score();
+				ShowScore();
+				// printf("\n축하합니다.\n");
 				Sleep(1000);
 			}
 			else
@@ -127,6 +133,7 @@ int main() {
 
 			system("cls");
 			ShowBox();
+			ShowScore();
 			ShowHealth(health);
 			show_string(word);
 			s_time = time(0);
@@ -222,7 +229,7 @@ void ShowHealth(int health)
 	int i;
 	
 	gotoxy(WIDTH - 30, 5);
-	printf("                    ");	// 하트 삭제
+	printf("                    ");	// 업데이트
 	gotoxy(WIDTH - 37, 5);
 	SetColor(15, 4);	// 글자 하양, 배경 진한 빨강
 	printf(" HP ");
@@ -238,15 +245,27 @@ void SetColor(unsigned short text, unsigned short back)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), text | (back << 4));
 }
+// 점수 출력
+void ShowScore()
+{
+	gotoxy(10, 5);
+	printf("                 ");	// 업데이트
+	gotoxy(10, 5);
+	SetColor(10, 0);
+	printf("S C O R E : %d", score);
+	SetColor(15, 0);	// 글자 하양, 배경 검정
+	gotoxy(0, 0);		// 박스 지워지는 버그 해결
+}
 
 
 // 김태영
 // 남은 시간에 따른 점수
 void time_score()
 {
-	timescore = 150 * (remain_time / LIMIT_TIME);
+	timescore = 150 * ((double)remain_time / LIMIT_TIME);
 	score += timescore;
 }
+// 점수 출력 시 쉬운 거, 어려운 거 같이 +1 됨
 // 유아기 점수 출력
 void show_score_CHILD()
 {
