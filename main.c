@@ -14,13 +14,13 @@
 #define WIDTH 128
 #define HEIGHT 32
 #define SIZE 6
-#define TIME_LIMIT 5		//  통일 필요
+//#define TIME_LIMIT 5		//  통일 필요
 
 // 김태영
 #define CHILD_CLEAR 150         /*유아기 클리어 점수*/
 #define ADOLESENT_CLEAR 300      /*청년기 클리어 점수*/
 #define OLD_CLEAR 450         /*노년기 클리어 점수*/
-#define LIMIT_TIME 15         /*단어하나당 주어진 시간*/
+//#define LIMIT_TIME 15         /*단어하나당 주어진 시간*/
 
 // 조현영
 
@@ -46,14 +46,14 @@ int update_correct();         //맞은 개수 +1하고 저장하는 함수
 int update_difficult();         //틀린 개수 +1하고 저장하는 함수 <=== 틀린 개수가 아니라 어려운 거 맞은 개수??
 
 // 조현영
-
+void timeprint(int, int, int, int); //남은시간 출력 함수
 
 // 김재윤
 
 
 //========================== 전역 변수
 // 김태환
-
+int timeLimit;
 
 // 김태영
 int score = 0;               //점수 저장 변수, 0으로 초기화
@@ -65,11 +65,24 @@ int remain_time;            //타이핑 후 남은 시간
 
 
 // 김재윤
+char* word1[SIZE] = {	"arrive","bicycle","bring","button",
+						"monkey","nurse","patent","strawberry",
+						"supermarket","tomorrow","yellow","yesterday",
+						"pediatric asthma","autointoxication",
+						"battered child syndrome" };
+
 
 int main() {
 	char word[SIZE], ch, input[SIZE];
 	int s_time, j = 0;
 	int health = 10;
+	int level = 3;	// 1, 2, 3 순
+
+	switch (level) {
+	case 1: timeLimit = 15; break;
+	case 2: timeLimit = 12; break;
+	case 3: timeLimit = 9; break;
+	}
 
 
 	system("mode con cols=128 lines=32");
@@ -84,7 +97,9 @@ int main() {
 	s_time = time(0);
 	while (1)
 	{
-		if (time(0) == s_time + TIME_LIMIT)
+		remain_time = s_time + timeLimit - time(0);
+		timeprint(timeLimit, remain_time, j, 0);
+		if (time(0) == s_time + timeLimit)
 		{
 			system("cls");
 			health -= 2;	// 시간 초과 체력 -2
@@ -122,10 +137,10 @@ int main() {
 			input[SIZE - 1] = 0;
 			if (!strcmp(word, input))
 			{
-				remain_time = s_time + TIME_LIMIT - time(0);
+				
 				time_score();
 				ShowScore();
-				// printf("\n축하합니다.\n");
+		
 				Sleep(1000);
 			}
 			else
@@ -138,6 +153,7 @@ int main() {
 			show_string(word);
 			s_time = time(0);
 			j = 0;
+			timeprint(timeLimit, remain_time, j, 1);
 		}
 
 		if (health <= 0)
@@ -262,7 +278,7 @@ void ShowScore()
 // 남은 시간에 따른 점수
 void time_score()
 {
-	timescore = 150 * ((double)remain_time / LIMIT_TIME);
+	timescore = 150 * ((double)remain_time / timeLimit);
 	score += timescore;
 }
 // 점수 출력 시 쉬운 거, 어려운 거 같이 +1 됨
@@ -295,4 +311,34 @@ int update_difficult()
 {
 	difficult++;      //어려운단어 맞은 개수 +1
 	return difficult;
+}
+
+// 조현영
+void timeprint(int timeLimit, int leveltime, int j, int istyped) {
+	// do-while문 삭제 - main 내에서 무한루프
+	static int timecmp;
+	static int init = 1;
+	
+	if (init)
+	{
+		timecmp = timeLimit;
+		gotoxy(127 / 2 - 8 / 2, 15);
+		printf("%2ds left", leveltime);
+		gotoxy(127 / 2 - 5 / 2 + j, 19);	// 커서 박스로
+		init = 0;
+	}
+	if (timecmp > leveltime)
+	{
+		gotoxy(127 / 2 - 8 / 2, 15);
+		printf("%2ds left", leveltime);
+		gotoxy(127 / 2 - 5 / 2 + j, 19);	// 커서 박스로
+		timecmp = leveltime;
+		if (timecmp <= 0)
+		{
+			timecmp = timeLimit;
+			init = 1;
+		}
+	}
+	if (istyped)
+		init = 1;			// 타이핑 끝났을 때 초기화
 }
