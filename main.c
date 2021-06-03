@@ -31,21 +31,31 @@ void Next_Stage();//06.02 김태영 다음 스테이지로 넘어가는 함수
 void show_string(int*); // 문자열 출력
 void ShowLevel(int);    // 레벨 시작 안내문 출력
 int ClearScore(int);    // 스테이지 클리어 점수
+void modeSelect(); //모드 선택 함수
+void levelSelect(); //난이도 선택 함수
 
-int score = 0;
+int score;
+int mode;
 int menu;//메뉴호출
 int* p_menu = &menu;
 int timescore;               //남는 시간에 따른 추가 점수
 int n = 0;                    //콤보
 int level;                      //06.02김태영 level에 따라 단어배열 대입다르게 해야하므로 전역변수로 선언
 int health;
+int word[SIZE];
 char* word1[SIZE] = { "arrive","bicycle","bring","button"
-    ,"monkey","nurse","patent","strawberry","supermarket","tomorrow","yellow","yesterday","pediatric","autoi","measles","answer" };
+    ,"monkey","nurse","patent","strawberry","supermarket","tomorrow","yellow","yesterday","pediatric asthma","autoi","measles","answer" };
 //06.02김태영 난이도 따른 단어 배열 추가
-char* word2[SIZE] = { "marrige","university","employment" ,"unemployment"
+char* word2[SIZE] = { "marriage","university","employment" ,"unemployment"
 , "campus","certificate" ,"culture" ,"military","internet", "challenge", "start up","bitcoin", "panic","apartment","dyspepsia" ,"adolesent" };
 char* word3[SIZE] = { "nursing home","retire","funeral","denture","mature","wise",
 "memory","gray hair","travel","sapient","hospital","experience","senile dementia","kodokushi","glaucoma" };
+char* word4[SIZE] = { "kindergarten","bicycle","picky eating","pediatrician"
+    ,"report card","immature","patent","strawberry","supermarket","tomorrow","key harmonica","yesterday","pediatric asthma","autoi","measles vaccine","answer" };
+char* word5[SIZE] = { "congratulatory money","university","employment" ,"severance pay"
+, "graduate school","certificate" ,"culture" ,"stock investment","internet", "challenge", "anaphylaxis","bitcoin", "social networking service","apartment","dyspepsia" ,"career design" };
+char* word6[SIZE] = { "nursing home","ventilation","funeral","elderly depression","mentally mature","hale and harty",
+"homesickness","rheumatism","osteoporosis","sapient","hospital","experience","senile dementia","kodokushi","glaucoma" };
 
 int main()
 {
@@ -56,6 +66,7 @@ int main()
     srand(time(0));
     while (1)
     {
+        score = 0;
     mainstart:
         system("cls");
         Show_Box();
@@ -69,6 +80,10 @@ int main()
         scanf("%d", &start);
         if (start == 1)
         {
+            modeSelect();
+            if (mode < 3) levelSelect();
+            else level = rand() % 3 + 1;
+            /*
             system("cls");
             Show_Box();
             gotoxy(50, 7);
@@ -81,7 +96,7 @@ int main()
             printf("3. 노년기\n");
             gotoxy(50, 22);
             scanf("%d", &level);
-
+            */
 
             for (; level <= 3; level++)
             {
@@ -99,6 +114,15 @@ int main()
                 if ((*p_menu) == 3) {
                     break;
                 }
+                if (health <= 0)//06.03 김태영 체력이 다 닳아도 클리어되는것 수정
+                {
+                    system("cls");
+                    Show_Box();
+                    gotoxy(50, 15);
+                    printf("Game Over....");
+                    Sleep(1500);
+                    break;
+                }
                 Next_Stage();
                 score += ClearScore(level);
             }
@@ -106,6 +130,10 @@ int main()
                 (*p_menu) = 0;
                 break;
             }
+            //if (health <= 0)//06.03 김태영 체력이 다 닳아도 클리어되는것 수정
+                //break;
+
+
 
             /*
             if (level == 1)
@@ -212,7 +240,8 @@ int main()
         else
             continue;
     }
-    if (health == 0) {                      // 수정 예정
+    /*
+    if (health <= 0) {                      // 수정 예정
         system("cls");
         Show_Box();
         gotoxy(50, 15);
@@ -220,6 +249,7 @@ int main()
         Sleep(1500);
         goto mainstart;
     }
+    */
 }
 
 //커서이동
@@ -343,28 +373,11 @@ void time_score(int remain_time, int timeLimit)
 
 
 // 문자열 출력
-void show_string(int p, int* cnt)
+void show_string(int* cnt)
 {
-    
-    if ((p) == 1) 
-    {
-        gotoxy(127 / 2 - strlen(word1[*cnt]) / 2, 10);
-        printf("%s\n", word1[*cnt]);
-        gotoxy(127 / 2 - strlen(word1[*cnt]) / 2, 19);
-    }
-    if ((p) == 2) 
-    {
-        gotoxy(127 / 2 - strlen(word2[*cnt]) / 2, 10);
-        printf("%s\n", word2[*cnt]);
-        gotoxy(127 / 2 - strlen(word2[*cnt]) / 2, 19);
-    }
-    if ((p) == 3) 
-    {
-        gotoxy(127 / 2 - strlen(word3[*cnt]) / 2, 10);
-        printf("%s\n", word3[*cnt]);
-        gotoxy(127 / 2 - strlen(word3[*cnt]) / 2, 19);
-    }
-    
+    gotoxy(127 / 2 - strlen(word[*cnt]) / 2, 10);
+    printf("%s\n", word[*cnt]);
+    gotoxy(127 / 2 - strlen(word[*cnt]) / 2, 19);
 }
 // 점수 출력
 void ShowScore()
@@ -378,7 +391,7 @@ void ShowScore()
     gotoxy(0, 0);      // 박스 지워지는 버그 해결
 }
 //남은시간 출력
-void timeprint(int timeLimit, int leveltime, int i, int j, int istyped) {
+void timeprint(int timeLimit, int leveltime, int i, int j, int istyped) {       // 수정 요함 word 1
 
     static int timecmp;
     static int init = 1;
@@ -388,14 +401,14 @@ void timeprint(int timeLimit, int leveltime, int i, int j, int istyped) {
         timecmp = timeLimit;
         gotoxy(127 / 2 - 8 / 2, 15);
         printf("%2ds left", leveltime);
-        gotoxy(127 / 2 - strlen(word1[i]) / 2 + j, 19);   // 커서 박스로
+        gotoxy(127 / 2 - strlen(word[i]) / 2 + j, 19);   // 커서 박스로
         init = 0;
     }
     if (timecmp > leveltime)
     {
         gotoxy(127 / 2 - 8 / 2, 15);
         printf("%2ds left", leveltime);
-        gotoxy(127 / 2 - strlen(word1[i]) / 2 + j, 19);   // 커서 박스로
+        gotoxy(127 / 2 - strlen(word[i]) / 2 + j, 19);   // 커서 박스로
         timecmp = leveltime;
         if (timecmp <= 0)
         {
@@ -445,28 +458,37 @@ void Show_Menu()
 }
 //게임함수
 int typing_game() {
-    char ch, input[SIZE];
+    char ch, input[ASIZE];
     int s_time, j = 0;
     int i = 0;  // 배열의 순서를 이거로 정할거라 매 게임마다 리셋해주어야함.
     int remain_time;
     int timeLimit;
     int w;//06.02 김태영 난이도에 따른 배열복사하는 for문에 필요
-    int word[SIZE];
+
+
+    if (mode == 3) {
+        int idx = rand() % 6 + 1;
+        level = idx;
+    }
+    if (mode == 2) level += 3;
     //06.02 김태영 health에 난이도에 따라 값 할당
     switch (level) {
     case 1: timeLimit = 15; health = 12; for (w = 0; w < SIZE; w++)word[w] = word1[w]; break;   // word[]에 문자열 포인터 저장
     case 2: timeLimit = 10; health = 8;  for (w = 0; w < SIZE; w++)word[w] = word2[w]; break;
     case 3: timeLimit = 10; health = 4;  for (w = 0; w < SIZE; w++)word[w] = word3[w]; break;
+    case 4: timeLimit = 15; health = 12; for (w = 0; w < SIZE; w++)word[w] = word4[w]; break;   // word[]에 문자열 포인터 저장
+    case 5: timeLimit = 10; health = 8;  for (w = 0; w < SIZE; w++)word[w] = word5[w]; break;
+    case 6: timeLimit = 10; health = 4;  for (w = 0; w < SIZE; w++)word[w] = word6[w]; break;
     }
 
 
-    
+
 
 loop:
     Show_Box_Game();
     ShowScore();
     Show_Health(health);
-    show_string(level, &i);
+    show_string(&i);
 
     s_time = time(0);
     while (1)
@@ -482,7 +504,7 @@ loop:
             Show_Box_Game();
             ShowScore();
             Show_Health(health);
-            show_string(level, &i);
+            show_string(&i);
             s_time = time(0);
             j = 0;
             n = 0;//콤보초기화
@@ -545,7 +567,7 @@ loop:
             Show_Box_Game();
             ShowScore();
             Show_Health(health);
-            show_string(level, &i);
+            show_string(&i);
             j = 0;
             timeprint(timeLimit, remain_time, i, j, 1);
         }
@@ -598,4 +620,36 @@ int ClearScore(int level)
         return ADOLESENT_CLEAR;
     else if (level == 3)
         return OLD_CLEAR;
+}
+//모드 선택
+void modeSelect() {
+    system("cls");
+    Show_Box();
+    gotoxy(50, 7);
+    printf("모드를 선택하시오.\n");
+    gotoxy(50, 10);
+    printf("1. 기본 모드\n");
+    gotoxy(50, 14);
+    printf("2. 어려운 단어 모드\n");
+    gotoxy(50, 18);
+    printf("3. 랜덤 모드\n");
+    gotoxy(50, 22);
+    scanf("%d", &mode);
+
+}
+
+//난이도 선택
+void levelSelect() {
+    system("cls");
+    Show_Box();
+    gotoxy(50, 7);
+    printf("난이도를 선택하시오.\n");
+    gotoxy(50, 10);
+    printf("1. 유아기\n");
+    gotoxy(50, 14);
+    printf("2. 청년기\n");
+    gotoxy(50, 18);
+    printf("3. 노년기\n");
+    gotoxy(50, 22);
+    scanf("%d", &level);
 }
