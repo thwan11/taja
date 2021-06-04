@@ -68,146 +68,142 @@ int main()
     {
         score = 0;
     mainstart:
-        system("cls");
-        Show_Box();
-        gotoxy(50, 8);
-        printf("1.게임시작\n");
-        gotoxy(50, 12);
-        printf("2.게임종료\n");
-        gotoxy(50, 16);
-        printf("3.현재점수\n");
-        gotoxy(50, 20);
-        scanf("%d", &start);
+        while (1)
+        {
+            system("cls");
+            Show_Box();
+            gotoxy(50, 8);
+            printf("1.게임시작\n");
+            gotoxy(50, 12);
+            printf("2.게임종료\n");
+            gotoxy(50, 16);
+            printf("3.현재점수\n");
+            gotoxy(50, 20);
+            scanf("%d", &start);    // 예외처리 됨
+            while (getchar() != '\n');
+            if (start >= 1 && start <= 3)
+                break;
+        }
+
         if (start == 1)
         {
             modeSelect();
-            if (mode < 3) levelSelect();
-            else level = rand() % 3 + 1;
-            /*
-            system("cls");
-            Show_Box();
-            gotoxy(50, 7);
-            printf("난이도를 선택하시오.\n");
-            gotoxy(50, 10);
-            printf("1. 유아기\n");
-            gotoxy(50, 14);
-            printf("2. 청년기\n");
-            gotoxy(50, 18);
-            printf("3. 노년기\n");
-            gotoxy(50, 22);
-            scanf("%d", &level);
-            */
+            if (mode == 1) {
+                levelSelect();
 
-            for (; level <= 3; level++)
-            {
-                system("cls");
-                Show_Box();
-                gotoxy(50, 10);
-                ShowLevel(level);
-                Sleep(3000);
-                system("cls");
-                typing_game();
-                if ((*p_menu) == 2) {
-                    (*p_menu) = 0;
-                    break;
-                }
-                if ((*p_menu) == 3) {
-                    break;
-                }
-                if (health <= 0)//06.03 김태영 체력이 다 닳아도 클리어되는것 수정
+
+                for (; level <= 3; level++)
                 {
                     system("cls");
                     Show_Box();
-                    gotoxy(50, 15);
-                    printf("Game Over....");
-                    Sleep(1500);
-                    break;
-                }
-                Next_Stage();
-                score += ClearScore(level);
-            }
-            if ((*p_menu) == 3) {
-                (*p_menu) = 0;
-                break;
-            }
-            //if (health <= 0)//06.03 김태영 체력이 다 닳아도 클리어되는것 수정
-                //break;
-
-
-
-            /*
-            if (level == 1)
-            {
-                system("cls");
-                Show_Box();
-                gotoxy(50, 10);
-                printf("유아기 난이도를 시작합니다.");//유아기 게임 함수로 대체
-                Sleep(3000);
-                typing_game();
-                if ((*p_menu) == 2) {
-                    (*p_menu) = 0;
-                    continue;
+                    gotoxy(50, 10);
+                    ShowLevel(level);
+                    Sleep(3000);
+                    system("cls");
+                    typing_game();
+                    if ((*p_menu) == 2) {
+                        (*p_menu) = 0;
+                        break;
+                    }
+                    if ((*p_menu) == 3) {
+                        break;
+                    }
+                    if (health <= 0)//06.03 김태영 체력이 다 닳아도 클리어되는것 수정
+                    {
+                        system("cls");
+                        Show_Box();
+                        gotoxy(50, 15);
+                        printf("Game Over....");
+                        Sleep(1500);
+                        break;
+                    }
+                    Next_Stage();
+                    score += ClearScore(level);
                 }
                 if ((*p_menu) == 3) {
                     (*p_menu) = 0;
                     break;
                 }
-                Next_Stage();
-                level++;
-                score += CHILD_CLEAR;
-                //goto adolesent;
             }
-            if (level == 2)
-            {
-            //adolesent://06.02 김태영 goto문이용하여 스테이지 넘어가기
-                system("cls");
-                Show_Box();
-                gotoxy(50, 10);
-                printf("청년기게임을 시작합니다.");//청년기 게임 함수로 대체
-                Sleep(3000);
-                typing_game();//06.02 김태영 게임함수
-                if ((*p_menu) == 2) {
-                    (*p_menu) = 0;
-                    continue;
+            else if (mode == 2) {
+                levelSelect();
+
+
+                for (; level <= 3; level++)
+                {
+                    system("cls");
+                    Show_Box();
+                    gotoxy(50, 10);
+                    ShowLevel(level);
+                    Sleep(3000);
+                    system("cls");
+                    typing_game();
+                    if ((*p_menu) == 2) {
+                        (*p_menu) = 0;
+                        break;
+                    }
+                    if ((*p_menu) == 3) {
+                        break;
+                    }
+                    if (health <= 0)//06.03 김태영 체력이 다 닳아도 클리어되는것 수정
+                    {
+                        system("cls");
+                        Show_Box();
+                        gotoxy(50, 15);
+                        printf("Game Over....");
+                        Sleep(1500);
+                        break;
+                    }
+                    Next_Stage();
+                    score += ClearScore(level);
                 }
                 if ((*p_menu) == 3) {
                     (*p_menu) = 0;
                     break;
                 }
-                Next_Stage();//06.02김태영 다음스테이지로 자동이동
-                level++;
-                score += ADOLESENT_CLEAR;
-                //goto old;
             }
-            if (level == 3)
-            {
-            //old://06.02 goto문이용하여 스테이지 넘어가기
+            else if (mode == 3) {
                 system("cls");
                 Show_Box();
-                gotoxy(50, 10);
-                printf("노년기 게임을 시작합니다.");//노년기 게임 함수로 대체
-                Sleep(3000);
-                typing_game();//06.02김태영 게임함수
-                if ((*p_menu) == 2) {
-                    (*p_menu) = 0;
-                    continue;
+                gotoxy(50, 12);
+                printf("랜덤모드를 실행합니다.\n");
+                Sleep(1000);
+                // gotoxy(50, 10);
+                for (int k = 0; k < 3; k++)
+                {
+                    system("cls");
+                    Show_Box();
+                    gotoxy(50, 10);
+                    printf("랜덤한 문자 선택중....");
+                    Sleep(3000);
+                    system("cls");
+                    level = rand() % 6 + 1; // 수정 요함
+
+                    typing_game();
+                    if ((*p_menu) == 2) {
+                        (*p_menu) = 0;
+                        break;
+                    }
+                    if ((*p_menu) == 3) {
+                        break;
+                    }
+                    if (health <= 0)//06.03 김태영 체력이 다 닳아도 클리어되는것 수정
+                    {
+                        system("cls");
+                        Show_Box();
+                        gotoxy(50, 15);
+                        printf("Game Over....");
+                        Sleep(1500);
+                        break;
+                    }
+                    Next_Stage();
+                    score += ClearScore(level);
                 }
                 if ((*p_menu) == 3) {
                     (*p_menu) = 0;
                     break;
                 }
-                score += OLD_CLEAR;
-                system("cls");
-                Show_Box();
-                gotoxy(50, 14);
-                printf("축하합니다! 게임을 클리어했습니다!");
-                gotoxy(50, 16);
-                printf("점수는 %d점 입니다.", score);
-                gotoxy(50, 18);
-                printf("잠시후 처음화면으로 이동합니다.");
-                Sleep(2000);
-                continue;//06.02 김태영 처음화면으로 돌아가기
-            }*/
+            }
         }
         if (start == 2)
         {
@@ -219,22 +215,18 @@ int main()
         }
         if (start == 3)
         {
-            system("cls");
-            Show_Box();
+        
             while (1) {
+                system("cls");
+                Show_Box();
                 gotoxy(50, 10);
                 printf("현재점수는 %d점입니다.", score);
                 gotoxy(50, 14);
                 printf("처음화면으로 돌아가려면 m을 누르시오.");
                 gotoxy(50, 18);
-                scanf("%s", &ch);
+                scanf("%s", &ch);   // 예외처리 됨
                 if (ch == 'm')
                     break;
-                else {
-                    gotoxy(50, 18);
-                    printf("\b\b    \b");
-                    continue;
-                }
             }
         }
         else
@@ -441,19 +433,18 @@ void Show_Menu()
         gotoxy(50, 14);
         printf("3. 게임종료하기\n");
         gotoxy(50, 16);
-        scanf("%d", &menu);
+        scanf("%d", &menu); // 예외처리 됨
+        while (getchar() != '\n');
         if (*p_menu == 1) {
             system("cls");
             break;
         }
-        if (*p_menu == 2)
+        else if (*p_menu == 2)
             break;
 
-        if (*p_menu == 3)
+        else if (*p_menu == 3)
             break;
 
-        else
-            continue;
     }
 }
 //게임함수
@@ -620,36 +611,57 @@ int ClearScore(int level)
         return ADOLESENT_CLEAR;
     else if (level == 3)
         return OLD_CLEAR;
+    else if (level == 1)
+        return CHILD_CLEAR * 2;
+    else if (level == 2)
+        return ADOLESENT_CLEAR * 2;
+    else if (level == 3)
+        return OLD_CLEAR * 2;
 }
 //모드 선택
 void modeSelect() {
-    system("cls");
-    Show_Box();
-    gotoxy(50, 7);
-    printf("모드를 선택하시오.\n");
-    gotoxy(50, 10);
-    printf("1. 기본 모드\n");
-    gotoxy(50, 14);
-    printf("2. 어려운 단어 모드\n");
-    gotoxy(50, 18);
-    printf("3. 랜덤 모드\n");
-    gotoxy(50, 22);
-    scanf("%d", &mode);
-
+    while (1)
+    {
+        system("cls");
+        Show_Box();
+        gotoxy(50, 7);
+        printf("모드를 선택하시오.\n");
+        gotoxy(50, 10);
+        printf("1. 기본 모드\n");
+        gotoxy(50, 14);
+        printf("2. 어려운 단어 모드\n");
+        gotoxy(50, 18);
+        printf("3. 랜덤 모드\n");
+        gotoxy(50, 22);
+        scanf("%d", &mode); // 예외처리 됨
+        while (getchar() != '\n');
+        if (mode >= 1 && mode <= 3)
+            break;
+        
+    }
 }
 
 //난이도 선택
 void levelSelect() {
-    system("cls");
-    Show_Box();
-    gotoxy(50, 7);
-    printf("난이도를 선택하시오.\n");
-    gotoxy(50, 10);
-    printf("1. 유아기\n");
-    gotoxy(50, 14);
-    printf("2. 청년기\n");
-    gotoxy(50, 18);
-    printf("3. 노년기\n");
-    gotoxy(50, 22);
-    scanf("%d", &level);
+    while (1)
+    {
+        system("cls");
+        Show_Box();
+        gotoxy(50, 7);
+        if(mode == 1)
+            printf("난이도를 선택하시오.\n");
+        else
+            printf("하드모드 난이도를 선택하시오.\n");
+        gotoxy(50, 10);
+        printf("1. 유아기\n");
+        gotoxy(50, 14);
+        printf("2. 청년기\n");
+        gotoxy(50, 18);
+        printf("3. 노년기\n");
+        gotoxy(50, 22);
+        scanf("%d", &level);    // 예외처리 됨
+        while (getchar() != '\n');
+        if (level >= 1 && level <= 3)
+            break;
+    }
 }
