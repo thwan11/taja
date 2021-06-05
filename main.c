@@ -34,6 +34,9 @@ int ClearScore(int);    // 스테이지 클리어 점수
 void modeSelect(); //모드 선택 함수
 void levelSelect(); //난이도 선택 함수
 void update_best_score(int);//최고점수 5개 저장하는 함수
+void shuffle(int*, int);
+void hard_shuffle(int*, int, int);
+void printMent(int);
 
 int best[5] = { 0,0,0,0,0 };
 int score;
@@ -44,26 +47,28 @@ int timescore;               //남는 시간에 따른 추가 점수
 int n = 0;                    //콤보
 int level;                      //06.02김태영 level에 따라 단어배열 대입다르게 해야하므로 전역변수로 선언
 int health;
+int ment;
 int word[SIZE];
 char* word1[SIZE] = { "arrive","bicycle","bring","button"
-    ,"monkey","nurse","patent","strawberry","supermarket","tomorrow","yellow","yesterday","pediatric asthma","autoi","measles","answer" };
+    ,"monkey","nurse","parent","strawberry","supermarket","tomorrow","yesterday","pediatric asthma","Autoi","Measles","Answer" };
 //06.02김태영 난이도 따른 단어 배열 추가
 char* word2[SIZE] = { "marriage","university","employment" ,"unemployment"
-, "campus","certificate" ,"culture" ,"military","internet", "challenge", "start up","bitcoin", "panic","apartment","dyspepsia" ,"adolesent" };
+, "campus","certificate" ,"culture" ,"military","internet", "challenge", "start up","bitcoin", "Panic","Apartment","Dyspepsia" };
 char* word3[SIZE] = { "nursing home","retire","funeral","denture","mature","wise",
-"memory","gray hair","travel","sapient","hospital","experience","senile dementia","kodokushi","glaucoma" };
+"memory","gray hair","travel","sapient","hospital","experience","Senile dementia","Kodokushi","Glaucoma" };
 char* word4[SIZE] = { "kindergarten","bicycle","picky eating","pediatrician"
-    ,"report card","immature","patent","strawberry","supermarket","tomorrow","key harmonica","yesterday","pediatric asthma","autoi","measles vaccine","answer" };
+    ,"report card","immature","patent","strawberry","supermarket","tomorrow","key harmonica","yesterday","Pediatric asthma","Measles vaccine","Answer" };
 char* word5[SIZE] = { "congratulatory money","university","employment" ,"severance pay"
-, "graduate school","certificate" ,"culture" ,"stock investment","internet", "challenge", "anaphylaxis","bitcoin", "social networking service","apartment","dyspepsia" ,"career design" };
+, "graduate school","certificate" ,"culture" ,"stock investment","internet", "challenge", "anaphylaxis","bitcoin", "Apartment","Dyspepsia" ,"Adolesent" }; //15
 char* word6[SIZE] = { "nursing home","ventilation","funeral","elderly depression","mentally mature","hale and harty",
-"homesickness","rheumatism","osteoporosis","sapient","hospital","experience","senile dementia","kodokushi","glaucoma" };
+"homesickness","rheumatism","osteoporosis","sapient","hospital","experience","Senile dementia","Kodokushi","Glaucoma" }; //15
 
 int main()
 {
     char ch;                  //현재점수 보는 화면에서 원래화면으로 돌아가기
     int n;                  //콤보
     int start;      //start: 게임시작여부 입력 06.02김태영 level 전역변수로 선언
+    int lvlList[6] = { 1,2,3,4,5,6 };
     system("mode con cols=128 lines=32");
     srand(time(0));
     while (1)
@@ -93,15 +98,16 @@ int main()
             modeSelect();
             if (mode == 1) {
                 levelSelect();
+                ment = level;
 
-
-                for (; level <= 3; level++)
+                for (; level <= 3; level++, ment++)
                 {
                     system("cls");
                     Show_Box();
                     gotoxy(50, 10);
                     ShowLevel(level);
                     Sleep(3000);
+                    printMent(ment);
                     system("cls");
                     typing_game();
                     if ((*p_menu) == 2) {
@@ -130,18 +136,21 @@ int main()
                     (*p_menu) = 0;
                     break;
                 }
+                ment = 4;
+                printMent(ment);
             }
             else if (mode == 2) {
                 levelSelect();
+                ment = level;
 
-
-                for (; level <= 3; level++)
+                for (; level <= 3; level++, ment++)
                 {
                     system("cls");
                     Show_Box();
                     gotoxy(50, 10);
                     ShowLevel(level);
                     Sleep(3000);
+                    printMent(ment);
                     system("cls");
                     typing_game();
                     if ((*p_menu) == 2) {
@@ -168,6 +177,8 @@ int main()
                     (*p_menu) = 0;
                     break;
                 }
+                ment = 4;
+                printMent(ment);
             }
             else if (mode == 3) {
                 system("cls");
@@ -175,7 +186,7 @@ int main()
                 gotoxy(50, 12);
                 printf("랜덤모드를 실행합니다.\n");
                 Sleep(1000);
-                // gotoxy(50, 10);
+                shuffle(lvlList, 6);
                 for (int k = 0; k < 3; k++)
                 {
                     system("cls");
@@ -184,7 +195,8 @@ int main()
                     printf("랜덤한 문자 선택중....");
                     Sleep(3000);
                     system("cls");
-                    level = rand() % 6 + 1; // 수정 요함
+                    //level = rand() % 6 + 1; // 수정 요함
+                    level = lvlList[k];
 
                     typing_game();
                     if ((*p_menu) == 2) {
@@ -482,7 +494,16 @@ int typing_game() {
     case 6: timeLimit = 10; health = 4;  for (w = 0; w < SIZE; w++)word[w] = word6[w]; break;
     }
 
-
+    int C_cnt = 12; //어려운 단어 5배수 위치에 배치
+    shuffle(word, 12);
+    hard_shuffle(word, 13, 3);
+    for (int A = 4; A < 15; A += 5) {
+        char* temp;
+        temp = word[A];
+        word[A] = word[C_cnt];
+        word[C_cnt] = temp;
+        C_cnt++;
+    }
 
 
 loop:
@@ -501,7 +522,6 @@ loop:
             system("cls");
             i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
             if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
-            health -= 2;   // 시간 초과 체력 -2
             Show_Box_Game();
             ShowScore();
             Show_Health(health);
@@ -511,6 +531,10 @@ loop:
             menu_time = 0;
             j = 0;
             n = 0;//콤보초기화
+            health -= 2;   // 시간 초과 체력 -2
+            gotoxy(50, 23);
+            printf("시간 초과로 체력 2 감소!");
+            Sleep(1000);
         }
 
         if (_kbhit())
@@ -568,19 +592,38 @@ loop:
             input[strlen(word[i])] = 0;
             if (!strcmp(word[i], input))
             {
+                if ((i == 4) || (i == 9) || (i == 14)) {
+                    gotoxy(127 / 2 - 5 / 2, 22);
+                    printf("축하합니다.\n");
+                    Combo_score(remain_time, timeLimit);
+                    time_score(remain_time, timeLimit);
+                    update_difficult();
+                    ShowScore();
+                    gotoxy(127 / 2 - 5 / 2, 24);
+                    printf("+80");
+                    Sleep(1000);
+                    s_time = time(0);
+                }
+                if ((i != 4) && (i != 9) && (i != 14)) {
+                    gotoxy(127 / 2 - 5 / 2, 22);
+                    printf("축하합니다.\n");
+                    Combo_score(remain_time, timeLimit);
+                    time_score(remain_time, timeLimit);
+                    update_correct();
+                    ShowScore();
+                    gotoxy(127 / 2 - 5 / 2, 24);
+                    printf("+50");
+                    Sleep(1000);
+                    s_time = time(0);
+                }
                 i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
                 if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
-                gotoxy(127 / 2 - 5 / 2, 22);
-                printf("축하합니다.\n");
-                Combo_score(remain_time, timeLimit);
-                time_score(remain_time, timeLimit);
-                update_correct();
-                ShowScore();
-                Sleep(1000);
-                s_time = time(0);
             }
             else {
                 health--;   // 오타 체력 -1
+                gotoxy(50, 23);
+                printf("오타로 체력 1 감소!");
+                Sleep(1000);
                 n = 0;//콤보초기화
             }
             system("cls");
@@ -601,17 +644,20 @@ loop:
 void Combo_score(int remain_time, int timeLimit)
 {
     gotoxy(50, 22);
-    if (remain_time >= timeLimit - 2)
+    if (remain_time >= timeLimit - 3)   // -2 -> -3
     {
         n++;
         printf("%d combo!", n);
     }
-    if (remain_time < timeLimit - 2) {
+    if (remain_time < timeLimit - 3) {
         n = 0;
         printf("%d combo!", n);
     }
     if (n == 5) {
         score += 280;
+        gotoxy(50, 23);
+        printf("콤보 점수 획득!");
+        Sleep(1000);
         n = 0;
     }
 }
@@ -654,13 +700,13 @@ void modeSelect() {
         system("cls");
         Show_Box();
         gotoxy(50, 7);
-        printf("모드를 선택하시오.\n");
+        printf("인생 모드를 선택하시오.\n");
         gotoxy(50, 10);
-        printf("1. 기본 모드\n");
+        printf("1. 평범하게 산다\n");
         gotoxy(50, 14);
-        printf("2. 어려운 단어 모드\n");
+        printf("2. 도전적으로 산다\n");
         gotoxy(50, 18);
-        printf("3. 랜덤 모드\n");
+        printf("3. 운명에 맡긴다\n");
         gotoxy(50, 22);
         scanf("%d", &mode); // 예외처리 됨
         while (getchar() != '\n');
@@ -712,4 +758,72 @@ void update_best_score(int a)
             best[w] = a;
         }
     }
+}
+void shuffle(int* arr, int num)
+{
+    srand(time(NULL));
+    int temp;
+    int rn1, rn2;
+    for (int i = 0; i < num; i++) {
+        rn1 = rand() % num;
+        rn2 = rand() % num;
+        temp = arr[rn1];
+        arr[rn1] = arr[rn2];
+        arr[rn2] = temp;
+    }
+
+}
+void hard_shuffle(int* arr, int st, int num)
+{
+    srand(time(NULL));
+    int temp;
+    int rn1, rn2;
+    for (int i = 0; i < 5; i++) {
+        rn1 = rand() % num + st - 1;
+        rn2 = rand() % num + st - 1;
+        temp = arr[rn1];
+        arr[rn1] = arr[rn2];
+        arr[rn2] = temp;
+    }
+}
+
+//앞, 뒤, 사이 멘트 출력 함수
+void printMent(int ment) {
+    system("cls");
+    Show_Box();
+    gotoxy(50, 8);
+    switch (ment) {
+    case 1:
+        printf("내 나이 한 살, 인생을 시작해보자!\n"); //태영님이 작성해주실 부분.
+        break;
+    case 2:
+        printf("열심히 공부해서 건국대학교에 입학했다!!\n");
+        Sleep(1500);
+        gotoxy(50, 10);
+        printf("즐겁게 대학생활도 하고 공부도 열심히해야지!\n");
+        Sleep(1500);
+        gotoxy(50, 12);
+        printf("코로나 빨리 끝났으면…\n");
+        Sleep(1500);
+        gotoxy(50, 14);
+        printf("동기들 만나고 싶어요…");
+        break;
+    case 3:
+        printf("그동안 열심히 공부하고 일해왔으니\n");
+        Sleep(1500);
+        gotoxy(50, 10);
+        printf("이제 나의 시간을 보내야겠다!!");
+        break;
+    case 4:
+        printf("지난인생을 돌이켜보니\n");
+        Sleep(1500);
+        gotoxy(50, 10);
+        printf("좋은 인생이었다.");
+        Sleep(2000);
+        gotoxy(50, 14);
+        printf("지금까지 %d 점 획득 !", score);
+        break;
+    }
+    Sleep(3000);
+
 }
