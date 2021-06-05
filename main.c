@@ -33,7 +33,9 @@ void ShowLevel(int);    // 레벨 시작 안내문 출력
 int ClearScore(int);    // 스테이지 클리어 점수
 void modeSelect(); //모드 선택 함수
 void levelSelect(); //난이도 선택 함수
+void update_best_score(int);//최고점수 5개 저장하는 함수
 
+int best[5] = { 0,0,0,0,0 };
 int score;
 int mode;
 int menu;//메뉴호출
@@ -66,10 +68,11 @@ int main()
     srand(time(0));
     while (1)
     {
-        score = 0;
     mainstart:
         while (1)
         {
+            update_best_score(score);
+            score = 0;
             system("cls");
             Show_Box();
             gotoxy(50, 8);
@@ -77,7 +80,7 @@ int main()
             gotoxy(50, 12);
             printf("2.게임종료\n");
             gotoxy(50, 16);
-            printf("3.현재점수\n");
+            printf("3.점수순위보기\n");
             gotoxy(50, 20);
             scanf("%d", &start);    // 예외처리 됨
             while (getchar() != '\n');
@@ -103,6 +106,7 @@ int main()
                     typing_game();
                     if ((*p_menu) == 2) {
                         (*p_menu) = 0;
+                        score = 0;
                         break;
                     }
                     if ((*p_menu) == 3) {
@@ -117,7 +121,9 @@ int main()
                         Sleep(1500);
                         break;
                     }
-                    Next_Stage();
+                    if (level != 3) {
+                        Next_Stage();
+                    }
                     score += ClearScore(level);
                 }
                 if ((*p_menu) == 3) {
@@ -140,6 +146,7 @@ int main()
                     typing_game();
                     if ((*p_menu) == 2) {
                         (*p_menu) = 0;
+                        score = 0;
                         break;
                     }
                     if ((*p_menu) == 3) {
@@ -182,6 +189,7 @@ int main()
                     typing_game();
                     if ((*p_menu) == 2) {
                         (*p_menu) = 0;
+                        score = 0;
                         break;
                     }
                     if ((*p_menu) == 3) {
@@ -215,15 +223,17 @@ int main()
         }
         if (start == 3)
         {
-        
+
             while (1) {
                 system("cls");
                 Show_Box();
-                gotoxy(50, 10);
-                printf("현재점수는 %d점입니다.", score);
-                gotoxy(50, 14);
-                printf("처음화면으로 돌아가려면 m을 누르시오.");
+                for (int x = 0; x < 5; x++) {
+                    gotoxy(50, 8 + 2 * x);
+                    printf("%d. %d 점", x + 1, best[x]);
+                }
                 gotoxy(50, 18);
+                printf("처음화면으로 돌아가려면 m을 누르시오.");
+                gotoxy(50, 20);
                 scanf("%s", &ch);   // 예외처리 됨
                 if (ch == 'm')
                     break;
@@ -450,7 +460,7 @@ void Show_Menu()
 //게임함수
 int typing_game() {
     char ch, input[ASIZE];
-    int s_time, j = 0;
+    int s_time, esc_time = 0, menu_time = 0, j = 0;
     int i = 0;  // 배열의 순서를 이거로 정할거라 매 게임마다 리셋해주어야함.
     int remain_time;
     int timeLimit;
@@ -484,9 +494,9 @@ loop:
     s_time = time(0);
     while (1)
     {
-        remain_time = s_time + timeLimit - time(0);
+        remain_time = s_time + timeLimit + menu_time - esc_time - time(0);
         timeprint(timeLimit, remain_time, i, j, 0);
-        if (time(0) == s_time + timeLimit)
+        if (remain_time == 0)
         {
             system("cls");
             i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
@@ -497,6 +507,8 @@ loop:
             Show_Health(health);
             show_string(&i);
             s_time = time(0);
+            esc_time = 0;
+            menu_time = 0;
             j = 0;
             n = 0;//콤보초기화
         }
@@ -506,6 +518,7 @@ loop:
             ch = _getch();
             if (ch == 27)
             {
+                esc_time = time(0);
                 Show_Menu();
                 if (*p_menu == 2) {
                     break;
@@ -514,7 +527,23 @@ loop:
                     break;
                 }
                 if (*p_menu == 1) {
-                    goto loop;
+                    menu_time = time(0);
+                    Show_Box_Game();
+                    ShowScore();
+                    Show_Health(health);
+                    show_string(&i);        // 글자 공백으로 커서만 가는 이유 show_string, print_time
+                    for (int k = 0; k < i; k++)
+                    {
+                        printf("\b");
+                    }
+                    //printf("%s", input);  // 왜 안 되는지 모르겠음
+                    for (int k = 0; k < j; k++)
+                    {
+                        printf("%c", input[k]);
+                    }
+                    *p_menu = 0;
+                    continue;
+                    //goto loop;
                 }
             }
             if (ch == 8)
@@ -637,7 +666,7 @@ void modeSelect() {
         while (getchar() != '\n');
         if (mode >= 1 && mode <= 3)
             break;
-        
+
     }
 }
 
@@ -648,7 +677,7 @@ void levelSelect() {
         system("cls");
         Show_Box();
         gotoxy(50, 7);
-        if(mode == 1)
+        if (mode == 1)
             printf("난이도를 선택하시오.\n");
         else
             printf("하드모드 난이도를 선택하시오.\n");
@@ -663,5 +692,24 @@ void levelSelect() {
         while (getchar() != '\n');
         if (level >= 1 && level <= 3)
             break;
+    }
+}
+//최고점수5개 저장하는 함수
+void update_best_score(int a)
+{
+    int x, w;
+    if (a >= best[0]) {
+        for (x = 4; x > 0; x--) {
+            best[x] = best[(x - 1)];
+        }
+        best[0] = a;
+    }
+    for (w = 1; w < 5; w++) {
+        if (a >= best[w] && a < best[w - 1]) {
+            for (x = 4; x > w; x--) {
+                best[x] = best[(x - 1)];
+            }
+            best[w] = a;
+        }
     }
 }
