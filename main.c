@@ -426,7 +426,7 @@ void timeprint(int timeLimit, int leveltime, int i, int j, int istyped) {       
         timecmp = leveltime;
         if (timecmp <= 0)
         {
-            timecmp = timeLimit;
+            timecmp = timeLimit;            // 중복인가? 수정필요
             init = 1;
         }
     }
@@ -520,6 +520,46 @@ loop:
         if (remain_time == 0)
         {
             system("cls");
+            j = 0;
+            n = 0;//콤보초기화
+            health -= 2;   // 시간 초과 체력 -2
+            i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
+            if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
+            gotoxy(50, 23);
+            printf("시간 초과로 체력 2 감소!");
+            Show_Box_Game();
+            ShowScore();
+            Show_Health(health);
+            Sleep(1000);
+            system("cls");
+            Show_Box_Game();
+            ShowScore();
+            Show_Health(health);
+            show_string(&i);
+            s_time = time(0);
+            esc_time = 0;
+            menu_time = 0;
+            
+            /*
+            system("cls");
+            i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
+            if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
+            Show_Box_Game();
+            ShowScore();
+            health -= 2;   // 시간 초과 체력 -2
+            Show_Health(health);
+            show_string(&i);
+            gotoxy(50, 23);
+            printf("시간 초과로 체력 2 감소!");
+            Sleep(1000);
+            s_time = time(0);
+            esc_time = 0;
+            menu_time = 0;
+            j = 0;
+            n = 0;//콤보초기화
+            */
+            /*
+            system("cls");
             i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
             if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
             Show_Box_Game();
@@ -534,7 +574,8 @@ loop:
             health -= 2;   // 시간 초과 체력 -2
             gotoxy(50, 23);
             printf("시간 초과로 체력 2 감소!");
-            Sleep(1000);
+            Sleep(1000);                                    //  1초 쉬어서 14초 부터 시작하는 듯
+            */
         }
 
         if (_kbhit())
