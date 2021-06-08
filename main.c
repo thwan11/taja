@@ -4,9 +4,9 @@
 #include <Windows.h>
 #include <conio.h>
 
-#define CHILD_CLEAR 150
-#define ADOLESENT_CLEAR 300
-#define OLD_CLEAR 450
+#define CHILD_CLEAR 1500
+#define ADOLESENT_CLEAR 3000
+#define OLD_CLEAR 4500
 
 #define CURSOR1 40
 #define CURSOR2 12
@@ -40,7 +40,7 @@ void printMent(int);
 
 int best[5] = { 0,0,0,0,0 };
 int score;
-int mode;
+int mode = 1;
 int menu;//메뉴호출
 int* p_menu = &menu;
 int timescore;               //남는 시간에 따른 추가 점수
@@ -48,6 +48,7 @@ int n = 0;                    //콤보
 int level;                      //06.02김태영 level에 따라 단어배열 대입다르게 해야하므로 전역변수로 선언
 int health;
 int ment;
+int er = 0;
 int word[SIZE];
 char* word1[SIZE] = { "arrive","bicycle","bring","button"
     ,"monkey","nurse","parent","strawberry","supermarket","tomorrow","yesterday","pediatric asthma","Autoi","Measles","Answer" };
@@ -73,9 +74,9 @@ int main()
     srand(time(0));
     while (1)
     {
-    mainstart:
         while (1)
         {
+            /*콤보초기화 필요*/n = 0;
             update_best_score(score);
             score = 0;
             system("cls");
@@ -87,15 +88,16 @@ int main()
             gotoxy(50, 16);
             printf("3.점수순위보기\n");
             gotoxy(50, 20);
+            printf("4.옵션");
+            gotoxy(50, 23);
             scanf("%d", &start);    // 예외처리 됨
             while (getchar() != '\n');
-            if (start >= 1 && start <= 3)
+            if (start >= 1 && start <= 4)
                 break;
         }
 
         if (start == 1)
         {
-            modeSelect();
             if (mode == 1) {
                 levelSelect();
                 ment = level;
@@ -111,7 +113,6 @@ int main()
                     system("cls");
                     typing_game();
                     if ((*p_menu) == 2) {
-                        (*p_menu) = 0;
                         score = 0;
                         break;
                     }
@@ -136,6 +137,11 @@ int main()
                     (*p_menu) = 0;
                     break;
                 }
+                if (health <= 0 || (*p_menu) == 2)
+                {
+                    (*p_menu) = 0;
+                    continue;
+                }
                 ment = 4;
                 printMent(ment);
             }
@@ -154,7 +160,6 @@ int main()
                     system("cls");
                     typing_game();
                     if ((*p_menu) == 2) {
-                        (*p_menu) = 0;
                         score = 0;
                         break;
                     }
@@ -176,6 +181,11 @@ int main()
                 if ((*p_menu) == 3) {
                     (*p_menu) = 0;
                     break;
+                }
+                if (health <= 0 || (*p_menu) == 2)
+                {
+                    (*p_menu) = 0;
+                    continue;
                 }
                 ment = 4;
                 printMent(ment);
@@ -195,12 +205,10 @@ int main()
                     printf("랜덤한 문자 선택중....");
                     Sleep(3000);
                     system("cls");
-                    //level = rand() % 6 + 1; // 수정 요함
                     level = lvlList[k];
 
                     typing_game();
                     if ((*p_menu) == 2) {
-                        (*p_menu) = 0;
                         score = 0;
                         break;
                     }
@@ -216,17 +224,28 @@ int main()
                         Sleep(1500);
                         break;
                     }
+                    if (k == 2)break;
                     Next_Stage();
                     score += ClearScore(level);
                 }
-                if ((*p_menu) == 3) {
+                if (health <= 0 || (*p_menu) == 2)
+                {
+                    (*p_menu) = 0;
+                    continue;
+                }                if ((*p_menu) == 3) {
                     (*p_menu) = 0;
                     break;
                 }
+                system("cls");
+                Show_Box();
+                gotoxy(50, 12);
+                printf("점수는 %d 점입니다.", score);
+                Sleep(1500);
             }
         }
         if (start == 2)
         {
+            // while ((ch = getchar()) != '\n');
             system("cls");
             Show_Box();
             gotoxy(50, 16);
@@ -246,24 +265,17 @@ int main()
                 gotoxy(50, 18);
                 printf("처음화면으로 돌아가려면 m을 누르시오.");
                 gotoxy(50, 20);
-                scanf("%s", &ch);   // 예외처리 됨
+                scanf("%c", &ch);   // 예외처리 됨
                 if (ch == 'm')
                     break;
             }
         }
+        if (start == 4) {
+            modeSelect();
+        }
         else
             continue;
     }
-    /*
-    if (health <= 0) {                      // 수정 예정
-        system("cls");
-        Show_Box();
-        gotoxy(50, 15);
-        printf("Game Over....");
-        Sleep(1500);
-        goto mainstart;
-    }
-    */
 }
 
 //커서이동
@@ -384,16 +396,13 @@ void time_score(int remain_time, int timeLimit)
     score += timescore;
 }
 
-
-
-// 문자열 출력
 void show_string(int* cnt)
 {
     gotoxy(127 / 2 - strlen(word[*cnt]) / 2, 10);
     printf("%s\n", word[*cnt]);
     gotoxy(127 / 2 - strlen(word[*cnt]) / 2, 19);
 }
-// 점수 출력
+
 void ShowScore()
 {
     gotoxy(10, 5);
@@ -404,7 +413,7 @@ void ShowScore()
     SetColor(15, 0);   // 글자 하양, 배경 검정
     gotoxy(0, 0);      // 박스 지워지는 버그 해결
 }
-//남은시간 출력
+
 void timeprint(int timeLimit, int leveltime, int i, int j, int istyped) {       // 수정 요함 word 1
 
     static int timecmp;
@@ -426,7 +435,7 @@ void timeprint(int timeLimit, int leveltime, int i, int j, int istyped) {       
         timecmp = leveltime;
         if (timecmp <= 0)
         {
-            timecmp = timeLimit;            // 중복인가? 수정필요
+            timecmp = timeLimit;
             init = 1;
         }
     }
@@ -516,66 +525,13 @@ loop:
     while (1)
     {
         remain_time = s_time + timeLimit + menu_time - esc_time - time(0);
-        timeprint(timeLimit, remain_time, i, j, 0);
-        if (remain_time == 0)
-        {
-            system("cls");
-            j = 0;
-            n = 0;//콤보초기화
-            health -= 2;   // 시간 초과 체력 -2
-            i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
-            if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
-            gotoxy(50, 23);
-            printf("시간 초과로 체력 2 감소!");
-            Show_Box_Game();
-            ShowScore();
-            Show_Health(health);
-            Sleep(1000);
-            system("cls");
-            Show_Box_Game();
-            ShowScore();
-            Show_Health(health);
-            show_string(&i);
-            s_time = time(0);
-            esc_time = 0;
-            menu_time = 0;
-            
-            /*
-            system("cls");
-            i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
-            if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
-            Show_Box_Game();
-            ShowScore();
-            health -= 2;   // 시간 초과 체력 -2
-            Show_Health(health);
-            show_string(&i);
-            gotoxy(50, 23);
-            printf("시간 초과로 체력 2 감소!");
-            Sleep(1000);
-            s_time = time(0);
-            esc_time = 0;
-            menu_time = 0;
-            j = 0;
-            n = 0;//콤보초기화
-            */
-            /*
-            system("cls");
-            i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
-            if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
-            Show_Box_Game();
-            ShowScore();
-            Show_Health(health);
-            show_string(&i);
-            s_time = time(0);
-            esc_time = 0;
-            menu_time = 0;
-            j = 0;
-            n = 0;//콤보초기화
-            health -= 2;   // 시간 초과 체력 -2
-            gotoxy(50, 23);
-            printf("시간 초과로 체력 2 감소!");
-            Sleep(1000);                                    //  1초 쉬어서 14초 부터 시작하는 듯
-            */
+
+        if (er == 1) {
+            timeprint(timeLimit, remain_time, i, j, 1);
+            er = 0;
+        }
+        else {
+            timeprint(timeLimit, remain_time, i, j, 0);
         }
 
         if (_kbhit())
@@ -586,6 +542,9 @@ loop:
                 esc_time = time(0);
                 Show_Menu();
                 if (*p_menu == 2) {
+                    er = 1;
+                    esc_time = 0;
+                    menu_time = 0;
                     break;
                 }
                 if (*p_menu == 3) {
@@ -607,9 +566,10 @@ loop:
                         printf("%c", input[k]);
                     }
                     *p_menu = 0;
-                    continue;
+                    continue;           // 공백 생기는 문제 생김
                     //goto loop;
                 }
+                continue;
             }
             if (ch == 8)
             {
@@ -628,6 +588,32 @@ loop:
             }
         }
 
+        if (remain_time == 0)
+        {
+            system("cls");
+            j = 0;
+            n = 0;//콤보초기화
+            health -= 2;   // 시간 초과 체력 -2
+            i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
+            if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
+            gotoxy(50, 23);
+            printf("시간을 초과하였습니다!");
+            Show_Box_Game();
+            ShowScore();
+            Show_Health(health);
+            Sleep(1000);
+            system("cls");
+            Show_Box_Game();
+            ShowScore();
+            Show_Health(health);
+            show_string(&i);
+            s_time = time(0);
+            esc_time = 0;
+            menu_time = 0;
+        }
+
+
+
         if (j >= strlen(word[i]))
         {
             input[strlen(word[i])] = 0;
@@ -644,6 +630,8 @@ loop:
                     printf("+80");
                     Sleep(1000);
                     s_time = time(0);
+                    esc_time = 0;
+                    menu_time = 0;
                 }
                 if ((i != 4) && (i != 9) && (i != 14)) {
                     gotoxy(127 / 2 - 5 / 2, 22);
@@ -656,6 +644,8 @@ loop:
                     printf("+50");
                     Sleep(1000);
                     s_time = time(0);
+                    esc_time = 0;
+                    menu_time = 0;
                 }
                 i++;   //단어의 배열 중 다음 단어로 넘기게 됩니다
                 if (i >= 15) break;   //단어의 배열이 끝나게 되면 게임을 끝낸다
@@ -663,7 +653,7 @@ loop:
             else {
                 health--;   // 오타 체력 -1
                 gotoxy(50, 23);
-                printf("오타로 체력 1 감소!");
+                printf("오타가 생겼습니다!");
                 Sleep(1000);
                 n = 0;//콤보초기화
             }
